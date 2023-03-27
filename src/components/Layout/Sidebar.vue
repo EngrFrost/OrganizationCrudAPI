@@ -18,15 +18,18 @@
 
 <script setup>
 import { watch, defineProps, toRefs, ref } from 'vue'
-import { Layout, Menu } from 'ant-design-vue'
 import { RouterLink } from 'vue-router'
+import { Layout, Menu } from 'ant-design-vue'
 import { UserOutlined } from '@ant-design/icons-vue'
+
+//props
 const props = defineProps(['collapsed'])
 
+//states
 const { collapsed } = toRefs(props)
-
 const selectedKeys = ref(['1'])
 
+// useEffects
 watch(selectedKeys, (watch) => {
   selectedKeys.value = watch
 })

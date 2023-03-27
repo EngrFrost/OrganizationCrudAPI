@@ -19,7 +19,8 @@ const router = createRouter({
         {
           path: '',
           name: 'orgcontent',
-          component: Organization
+          component: Organization,
+          default: Organization
         }
       ]
     }

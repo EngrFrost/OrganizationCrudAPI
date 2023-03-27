@@ -13,19 +13,11 @@
           @finish="onFinish"
           @finishFailed="onFinishFailed"
         >
-          <Form.Item
-            label="Email"
-            name="email"
-            :rules="[{ required: true, message: 'Please input your username!' }]"
-          >
-            <a-input v-model:value="formState.email" />
+          <Form.Item label="Email" name="email" :rules="emailRules">
+            <Input v-model:value="formState.email" />
           </Form.Item>
 
-          <Form.Item
-            label="Password"
-            name="password"
-            :rules="[{ required: true, message: 'Please input your password!' }]"
-          >
+          <Form.Item label="Password" name="password" :rules="passwordRules">
             <Input.Password v-model:value="formState.password" />
           </Form.Item>
 
@@ -44,9 +36,9 @@
 
 <script setup>
 import { reactive, watch } from 'vue'
-import { Col, Row, Form, Button, Checkbox, Input } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { Col, Row, Form, Button, Checkbox, Input } from 'ant-design-vue'
 //hooks
 import useOrganization from '../stores/Organization'
 
@@ -61,17 +53,29 @@ const formState = reactive({
   remember: true
 })
 
+const passwordRules = [
+  { required: true, message: 'Please enter a password of the organization', trigger: 'submit' },
+  { min: 8, message: 'Password must be at least 8 characters long', trigger: 'submit' }
+]
+const emailRules = [
+  { required: true, message: 'Email is required' },
+  { type: 'email', message: 'Email must be a valid email address' }
+]
+
+//functions
 const onFinish = (values) => {
   console.log('Success:', values)
-  org.loginHandler()
+
+  org.loginHandler(values)
 }
 
 const onFinishFailed = (errorInfo) => {
   console.log('Failed:', errorInfo)
 }
 
+//useEffects
 watch(login, () => {
-  router.push({ name: 'home' })
+  router.push({ path: '/organization' })
 })
 </script>
 
