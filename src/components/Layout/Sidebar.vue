@@ -6,7 +6,7 @@
     <Menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
       <Menu.Item key="1">
         <UserOutlined />
-        <RouterLink class="link" :to="'/home/test'">Quiz</RouterLink>
+        <RouterLink class="link" :to="'/organization'">Quiz</RouterLink>
       </Menu.Item>
       <Menu.Item key="2">
         <UserOutlined />

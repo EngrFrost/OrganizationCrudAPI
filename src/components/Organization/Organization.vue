@@ -28,7 +28,7 @@
 
 <script setup>
 import { Table } from 'ant-design-vue'
-import { useOrganization } from '../../stores/Organization'
+import useOrganization from '../../stores/Organization'
 
 const org = useOrganization()
 console.log(org)
