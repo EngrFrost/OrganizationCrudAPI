@@ -22,20 +22,18 @@ const useOrganization = defineStore('Organization', {
           this.fetching = false
         })
         .catch((err) => {
-          if (err) {
-            console.log(err.response.data)
-            if (err.response.data['email']) {
-              message.error(err.response.data['email'])
-            }
-            if (err.response.data['password']) {
-              message.error(err.response.data['password'])
-            }
-            if (err.response.data['message']) {
-              message.error(err.response.data['message'])
-            }
-            this.error = err.response
-            this.fetching = false
+          console.log(err.response.data)
+          if (err.response.data['email']) {
+            message.error(err.response.data['email'])
           }
+          if (err.response.data['password']) {
+            message.error(err.response.data['password'])
+          }
+          if (err.response.data['message']) {
+            message.error(err.response.data['message'])
+          }
+          this.error = err.response
+          this.fetching = false
         })
     },
     fetchOrganization() {
@@ -63,10 +61,8 @@ const useOrganization = defineStore('Organization', {
           this.fetching = false
         })
         .catch((err) => {
-          if (err) {
-            this.error = err.response
-            this.fetching = false
-          }
+          this.error = err.response
+          this.fetching = false
         })
     },
     addOrganization(form) {
@@ -80,14 +76,44 @@ const useOrganization = defineStore('Organization', {
             'Content-Type': 'application/json'
           }
         })
-        .then(() => {
+        .then((res) => {
           this.fetching = false
           this.fetchOrganization()
+
+          message.success(res.data['message'])
         })
         .catch((err) => {
-          if (err) {
-            this.error = err.response
-            this.fetching = false
+          this.error = err.response
+          this.fetching = false
+          console.log(err)
+          if (err.response.data['message']) {
+            message.error(err.response.data['message'])
+          }
+        })
+    },
+    deleteOrganization(id) {
+      const storedToken = token()
+      this.fetching = true
+
+      api
+        .delete(`/organization/delete/${id}`, {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((res) => {
+          this.fetching = false
+          this.fetchOrganization()
+          console.log(res)
+          message.success(res.data['message'])
+        })
+        .catch((err) => {
+          this.error = err.response
+          console.log(err)
+          this.fetching = false
+          if (err.response.data['message']) {
+            message.error(err.response.data['message'])
           }
         })
     }

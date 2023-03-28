@@ -17,32 +17,42 @@
         <template v-if="column.key === 'operation'">
           <Space
             ><EditTwoTone
-              @click="handleActionClick(record)"
+              @click="handleActionClick(record, 'edit')"
               twoToneColor="#1890ff"
               style="font-size: 22px" />
             <DeleteTwoTone
-              @click="handleActionClick(record)"
+              @click="handleActionClick(record, 'delete')"
               twoToneColor="red"
               style="font-size: 22px"
           /></Space>
         </template>
       </template>
     </Table>
+
+    <DeleteOrganization
+      @closeDialogEditOrganization="closeDialogEditOrganization"
+      :isOpenDialogEditOrganization="isOpenDialogEditOrganization"
+      :modalID="modalID"
+    />
   </div>
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { Table, Space } from 'ant-design-vue'
 import useOrganization from '../../stores/Organization'
 import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons-vue'
+import DeleteOrganization from './DeleteOrganization.vue'
 //component
 import AddNewOrganization from './AddnewOrganization.vue'
 
 const org = useOrganization()
 
 const { organizationData, fetching: isLoadingTable } = storeToRefs(org)
+const isOpenDialogEditOrganization = ref(false)
+// const isOpenDialogUpdateOrganization = ref(true)
+const modalID = ref()
 
 const columns = [
   {
@@ -72,9 +82,23 @@ const columns = [
   }
 ]
 
-const handleActionClick = (record) => {
+const closeDialogEditOrganization = () => {
+  isOpenDialogEditOrganization.value = false
+}
+const handleActionClick = (record, type) => {
   // do something with the clicked row data
-  console.log('Clicked record:', record.id)
+  const action = {
+    edit: () => {
+      console.log('edit Clicked record:', record.id)
+    },
+
+    delete: () => {
+      console.log('delete Clicked record:', record.id)
+      modalID.value = record.id
+      isOpenDialogEditOrganization.value = true
+    }
+  }
+  action[type]()
 }
 
 //useEffects
