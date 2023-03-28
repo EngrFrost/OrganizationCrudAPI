@@ -6,6 +6,7 @@
     @ok="submitHandler"
     :cancel-button-props="{ disabled: formDisabled }"
     :ok-button-props="{ disabled: formDisabled }"
+    :okText="'YES'"
   >
     <Form ref="formRef" :model="formState">
       <Space direction="vertical">
@@ -70,7 +71,7 @@ const updateFormValidity = debounce(() => {
   formDisabled.value = !formState.inputField
 }, 500)
 const onInputFieldChange = () => {
-  //separate function since it is not working if inside 
+  //separate function since it is not working if inside
   updateFormValidity()
 }
 
