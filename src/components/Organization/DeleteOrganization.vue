@@ -1,6 +1,6 @@
 <template>
   <Modal
-    v-model:visible="isOpenDialogEditOrganization"
+    v-model:visible="isOpenDialogDeleteOrganization"
     title="Add New Organization"
     @cancel="cancelHandleClick"
     @ok="submitHandler"
@@ -17,7 +17,12 @@
           >Description:This is for those who do not have any assiociation</Typography.Text
         >
         <Form.Item name="inputField" :rules="inputValidation">
-          <Input placeholder="Username" v-model:value="formState.inputField"> </Input>
+          <Input
+            placeholder="YES DELETE"
+            v-model:value="formState.inputField"
+            @input="onInputFieldChange"
+          >
+          </Input>
         </Form.Item>
         <Space
           ><Typography.Text>Type</Typography.Text
@@ -32,14 +37,14 @@
 import { defineProps, toRefs, ref, reactive } from 'vue'
 import { Modal, Typography, Space, Input, Form, message } from 'ant-design-vue'
 import useOrganization from '../../stores/Organization'
-import { storeToRefs } from 'pinia'
+import { debounce } from 'lodash'
+import { DIALOGCONSTANTSVARIABLE } from '../../constants/constantsVarible'
 
 const org = useOrganization()
-const props = defineProps(['isOpenDialogEditOrganization', 'modalID'])
-const emits = defineEmits(['closeDialogEditOrganization'])
+const props = defineProps(['isOpenDialogDeleteOrganization', 'modalID'])
+const emits = defineEmits(['closeDialog'])
 
-const { isOpenDialogEditOrganization, modalID } = toRefs(props)
-const { fetching: isLoadingTable } = storeToRefs(org)
+const { isOpenDialogDeleteOrganization, modalID } = toRefs(props)
 
 const formRef = ref()
 const formDisabled = ref(false)
@@ -56,7 +61,17 @@ const inputValidation = [
 ]
 const cancelHandleClick = () => {
   console.log('check')
-  emits('closeDialogEditOrganization', false)
+  emits('closeDialog', DIALOGCONSTANTSVARIABLE.isForDeleteDialog)
+}
+
+// this function validate the input fields after 500 milisecond
+const updateFormValidity = debounce(() => {
+  console.log('checking form validity')
+  formDisabled.value = !formState.inputField
+}, 500)
+const onInputFieldChange = () => {
+  //separate function since it is not working if inside 
+  updateFormValidity()
 }
 
 const submitHandler = () => {
@@ -64,11 +79,11 @@ const submitHandler = () => {
     formDisabled.value = true
     if (formState.inputField === 'YES DELETE') {
       setTimeout(() => {
-        console.log('Submitted form:', modalID.value, isOpenDialogEditOrganization.value)
+        console.log('Submitted form:', modalID.value, isOpenDialogDeleteOrganization.value)
         org.deleteOrganization(modalID.value)
         resetUserForm()
-        formDisabled.value = isLoadingTable
-        emits('closeDialogEditOrganization')
+        formDisabled.value = false
+        emits('closeDialog', 'isForDeleteDialog')
       }, 1000)
     } else {
       message.error('The confirmation message doesnt match the input field you provide')

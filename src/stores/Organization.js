@@ -116,6 +116,32 @@ const useOrganization = defineStore('Organization', {
             message.error(err.response.data['message'])
           }
         })
+    },
+    updateOrganization(form) {
+      const storedToken = token()
+      this.fetching = true
+
+      api
+        .post(`/organization/update/${form.modalID}`, form, {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((res) => {
+          this.fetching = false
+          this.fetchOrganization()
+          console.log(res)
+          message.success(res.data['message'])
+        })
+        .catch((err) => {
+          this.error = err.response
+          this.fetching = false
+          console.log(err)
+          if (err.response.data['message']) {
+            message.error(err.response.data['message'])
+          }
+        })
     }
   }
 })

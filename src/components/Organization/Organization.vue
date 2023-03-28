@@ -1,7 +1,9 @@
 <!-- eslint-disable vue/no-unused-vars -->
 <template>
   <div>
-    <AddNewOrganization />
+    <Button type="primary" @click="openDialog(DIALOGCONSTANTSVARIABLE.isForAddNewDialog)"
+      >Add Organization</Button
+    >
 
     <Table :columns="columns" :data-source="organizationData" :loading="isLoadingTable">
       <template v-if="columns.scopedSlots.customRender === 'id'">
@@ -29,31 +31,47 @@
       </template>
     </Table>
 
+    <!-- Modal for Delete Organization  -->
     <DeleteOrganization
-      @closeDialogEditOrganization="closeDialogEditOrganization"
-      :isOpenDialogEditOrganization="isOpenDialogEditOrganization"
+      @closeDialog="closeDialog"
+      :isOpenDialogDeleteOrganization="isOpenDialogDeleteOrganization"
+      :modalID="modalID"
+    />
+    <!-- Modal for either add New Org or Update Organization  -->
+    <AddNewOrganization
+      :isOpenDialogAddUpdateOrganization="isOpenDialogAddUpdateOrganization"
+      @closeDialog="closeDialog"
+      :isForAddNewModal="isForAddNewModal"
       :modalID="modalID"
     />
   </div>
 </template>
 
 <script setup>
-import { onMounted, watch, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { Table, Space } from 'ant-design-vue'
+import { Table, Space, Button } from 'ant-design-vue'
 import useOrganization from '../../stores/Organization'
 import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons-vue'
-import DeleteOrganization from './DeleteOrganization.vue'
+//const
+import { DIALOGCONSTANTSVARIABLE } from '../../constants/constantsVarible'
 //component
 import AddNewOrganization from './AddnewOrganization.vue'
+import DeleteOrganization from './DeleteOrganization.vue'
 
 const org = useOrganization()
 
 const { organizationData, fetching: isLoadingTable } = storeToRefs(org)
-const isOpenDialogEditOrganization = ref(false)
-// const isOpenDialogUpdateOrganization = ref(true)
-const modalID = ref()
 
+//dialog status
+const isOpenDialogDeleteOrganization = ref(false)
+const isOpenDialogAddUpdateOrganization = ref(false)
+
+//get the modal ID from row clicked arrow data
+const modalID = ref()
+// either to check if the modal is for add or update
+const isForAddNewModal = ref()
+//columns header
 const columns = [
   {
     title: 'Organization ID',
@@ -82,29 +100,56 @@ const columns = [
   }
 ]
 
-const closeDialogEditOrganization = () => {
-  isOpenDialogEditOrganization.value = false
+//open dialog Handlers
+const openDialog = (type) => {
+  const action = {
+    isForDeleteDialog: () => {
+      isOpenDialogDeleteOrganization.value = true
+    },
+    isForAddNewDialog: () => {
+      isOpenDialogAddUpdateOrganization.value = true
+      isForAddNewModal.value = true
+    },
+    isForUpdateDialog: () => {
+      isOpenDialogAddUpdateOrganization.value = true
+      isForAddNewModal.value = false
+    }
+  }
+  action[type]()
 }
+
+//close dialog Handlers
+const closeDialog = (type) => {
+  const action = {
+    isForDeleteDialog: () => {
+      isOpenDialogDeleteOrganization.value = false
+    },
+    isForAddNewDialog: () => {
+      isOpenDialogAddUpdateOrganization.value = false
+    }
+  }
+  action[type]()
+}
+
 const handleActionClick = (record, type) => {
   // do something with the clicked row data
   const action = {
     edit: () => {
       console.log('edit Clicked record:', record.id)
-    },
+      modalID.value = record.id
 
+      openDialog(DIALOGCONSTANTSVARIABLE.isForUpdateDialog)
+    },
     delete: () => {
       console.log('delete Clicked record:', record.id)
       modalID.value = record.id
-      isOpenDialogEditOrganization.value = true
+      openDialog(DIALOGCONSTANTSVARIABLE.isForDeleteDialog)
     }
   }
   action[type]()
 }
 
 //useEffects
-watch(organizationData, () => {
-  console.log(organizationData.value)
-})
 
 onMounted(() => {
   console.log('check')

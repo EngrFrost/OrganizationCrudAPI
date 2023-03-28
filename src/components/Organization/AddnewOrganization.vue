@@ -1,12 +1,12 @@
 <template>
   <div style="margin-bottom: 1rem">
-    <Button type="primary" @click="visibleModalTrigger">Add Organization</Button>
     <Modal
-      v-model:visible="visibleModal"
+      v-model:visible="isOpenDialogAddUpdateOrganization"
       title="Add New Organization"
-      @cancel="visibleModal = false"
+      @cancel="$emit('closeDialog', DIALOGCONSTANTSVARIABLE.isForAddNewDialog)"
       :ok-button-props="{ disabled: formDisabled }"
       @ok="onFinish"
+      :okText="isForAddNewModal ? 'Add' : 'Update'"
     >
       <Form
         :model="formState"
@@ -28,14 +28,20 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { Button, Form, Modal, Textarea, Input } from 'ant-design-vue'
+import { ref, reactive, toRefs } from 'vue'
+import { Form, Modal, Textarea, Input } from 'ant-design-vue'
 import useOrganization from '../../stores/Organization'
+//constants
+import { DIALOGCONSTANTSVARIABLE } from '../../constants/constantsVarible'
+
+const props = defineProps(['isOpenDialogAddUpdateOrganization', 'isForAddNewModal', 'modalID'])
+const emit = defineEmits(['closeDialog'])
+const { isOpenDialogAddUpdateOrganization, isForAddNewModal, modalID } = toRefs(props)
 
 // access Pinia
 const org = useOrganization()
 //states
-const visibleModal = ref(false)
+
 const formDisabled = ref(false)
 const formRef = ref()
 
@@ -55,22 +61,40 @@ const initialformState = () => ({
 const formState = reactive(initialformState())
 const resetUserForm = () => Object.assign(formState, initialformState())
 
-//trigger modal handler
-const visibleModalTrigger = () => {
-  visibleModal.value = !visibleModal.value
-}
-//submit handler
-const onFinish = () => {
+const createHandler = () => {
   formRef.value.validate().then(() => {
     formDisabled.value = true
     setTimeout(() => {
       formDisabled.value = false
-      visibleModal.value = false
+      emit('closeDialog', DIALOGCONSTANTSVARIABLE.isForAddNewDialog)
       console.log('Submitted form:', formState)
       org.addOrganization(formState)
       resetUserForm()
     }, 1000)
   })
+}
+
+const updateHandler = () => {
+  console.log('update')
+  formRef.value.validate().then(() => {
+    formDisabled.value = true
+
+    setTimeout(() => {
+      formDisabled.value = false
+      emit('closeDialog', DIALOGCONSTANTSVARIABLE.isForAddNewDialog)
+      const newFormstate = { ...formState, modalID: modalID.value }
+      console.log('Submitted form:', newFormstate)
+      org.updateOrganization(newFormstate)
+      resetUserForm()
+    }, 1000)
+  })
+}
+
+
+//submit handler
+const onFinish = () => {
+  const actionHandler = isForAddNewModal.value ? createHandler : updateHandler
+  actionHandler()
 }
 </script>
 
