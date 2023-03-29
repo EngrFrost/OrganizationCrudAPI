@@ -39,28 +39,20 @@ import { reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { Col, Row, Form, Button, Checkbox, Input } from 'ant-design-vue'
+import { passwordRules, emailRules } from '../../../constants/constantsVarible'
 //hooks
-import useOrganization from '../stores/Organization'
+import useOrganization from '../../../stores/Organization'
 
 const org = useOrganization()
 const router = useRouter()
 
-const { login } = storeToRefs(org)
+const { user } = storeToRefs(org)
 
 const formState = reactive({
   email: '',
   password: '',
   remember: true
 })
-
-const passwordRules = [
-  { required: true, message: 'Please enter a password of the organization', trigger: 'submit' },
-  { min: 8, message: 'Password must be at least 8 characters long', trigger: 'submit' }
-]
-const emailRules = [
-  { required: true, message: 'Email is required' },
-  { type: 'email', message: 'Email must be a valid email address' }
-]
 
 //functions
 const onFinish = (values) => {
@@ -74,8 +66,8 @@ const onFinishFailed = (errorInfo) => {
 }
 
 //useEffects
-watch(login, () => {
-  router.push({ path: '/organization' })
+watch(user, () => {
+  router.push({ path: '/dashboard/organization' })
 })
 </script>
 

@@ -1,14 +1,16 @@
+import useOrganization from '../stores/Organization'
+
 // Function to check for token
 const token = () => {
-  const token = localStorage.getItem('token');
+  const org = useOrganization()
+  const token = localStorage.getItem('token')
 
   if (token) {
-    return token;
+    return token
+  } else {
+    localStorage.removeItem('token')
+    return org.token
   }
+}
 
-  localStorage.clear();
-  window.location = '/';
-  return;
-};
-
-export default token;
+export default token

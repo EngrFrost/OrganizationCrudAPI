@@ -37,9 +37,9 @@
 <script setup>
 import { defineProps, toRefs, ref, reactive } from 'vue'
 import { Modal, Typography, Space, Input, Form, message } from 'ant-design-vue'
-import useOrganization from '../../stores/Organization'
+import useOrganization from '../../../stores/Organization'
 import { debounce } from 'lodash'
-import { DIALOGCONSTANTSVARIABLE } from '../../constants/constantsVarible'
+import { DIALOG_CONSTANTS_VARIABLE } from '../../../constants/constantsVarible'
 
 const org = useOrganization()
 const props = defineProps(['isOpenDialogDeleteOrganization', 'modalID'])
@@ -48,7 +48,11 @@ const emits = defineEmits(['closeDialog'])
 const { isOpenDialogDeleteOrganization, modalID } = toRefs(props)
 
 const formRef = ref()
-const formDisabled = ref(false)
+const formDisabled = ref(true)
+
+const inputValidation = [
+  { required: true, message: 'Please Input the confirmation message to delete', trigger: 'submit' }
+]
 
 //initial state
 const initialformState = () => ({
@@ -57,12 +61,10 @@ const initialformState = () => ({
 const formState = reactive(initialformState())
 const resetUserForm = () => Object.assign(formState, initialformState())
 
-const inputValidation = [
-  { required: true, message: 'Please Input the confirmation message to delete', trigger: 'submit' }
-]
 const cancelHandleClick = () => {
-  console.log('check')
-  emits('closeDialog', DIALOGCONSTANTSVARIABLE.isForDeleteDialog)
+  resetUserForm()
+  formDisabled.value = true
+  emits('closeDialog', DIALOG_CONSTANTS_VARIABLE.isForDeleteDialog)
 }
 
 // this function validate the input fields after 500 milisecond
@@ -70,6 +72,7 @@ const updateFormValidity = debounce(() => {
   console.log('checking form validity')
   formDisabled.value = !formState.inputField
 }, 500)
+
 const onInputFieldChange = () => {
   //separate function since it is not working if inside
   updateFormValidity()
@@ -80,7 +83,6 @@ const submitHandler = () => {
     formDisabled.value = true
     if (formState.inputField === 'YES DELETE') {
       setTimeout(() => {
-        console.log('Submitted form:', modalID.value, isOpenDialogDeleteOrganization.value)
         org.deleteOrganization(modalID.value)
         resetUserForm()
         formDisabled.value = false

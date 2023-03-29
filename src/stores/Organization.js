@@ -5,7 +5,8 @@ import { message } from 'ant-design-vue'
 
 const useOrganization = defineStore('Organization', {
   state: () => ({
-    login: [],
+    user: [],
+    token: '',
     error: null,
     fetching: false,
     organizationData: []
@@ -15,14 +16,16 @@ const useOrganization = defineStore('Organization', {
       api
         .post('/auth/login', form)
         .then((res) => {
-          this.login = res.data.data
-          console.log(res.data)
-          localStorage.setItem('token', res.data.access_token)
+          this.user = res.data.data
           localStorage.setItem('user', JSON.stringify(res.data.data))
+          if (form.remember) {
+            localStorage.setItem('token', res.data.access_token)
+          } else {
+            this.token = res.data.access_token
+          }
           this.fetching = false
         })
         .catch((err) => {
-          console.log(err.response.data)
           if (err.response.data['email']) {
             message.error(err.response.data['email'])
           }
@@ -36,13 +39,14 @@ const useOrganization = defineStore('Organization', {
           this.fetching = false
         })
     },
-    fetchOrganization() {
+    fetchOrganization(url) {
       const storedToken = token()
+
       this.fetching = true
-      console.log('check')
+
       api
         .get(
-          '/organization',
+          url,
 
           {
             params: {
@@ -55,9 +59,7 @@ const useOrganization = defineStore('Organization', {
           }
         )
         .then((res) => {
-          this.organizationData = res.data.data
-          console.log(res.data.data)
-
+          this.organizationData = res.data
           this.fetching = false
         })
         .catch((err) => {
@@ -78,14 +80,13 @@ const useOrganization = defineStore('Organization', {
         })
         .then((res) => {
           this.fetching = false
-          this.fetchOrganization()
-
+          this.fetchOrganization('/organization')
           message.success(res.data['message'])
         })
         .catch((err) => {
           this.error = err.response
           this.fetching = false
-          console.log(err)
+
           if (err.response.data['message']) {
             message.error(err.response.data['message'])
           }
@@ -104,13 +105,11 @@ const useOrganization = defineStore('Organization', {
         })
         .then((res) => {
           this.fetching = false
-          this.fetchOrganization()
-          console.log(res)
+          this.fetchOrganization('fetchOrganization')
           message.success(res.data['message'])
         })
         .catch((err) => {
           this.error = err.response
-          console.log(err)
           this.fetching = false
           if (err.response.data['message']) {
             message.error(err.response.data['message'])
@@ -131,13 +130,12 @@ const useOrganization = defineStore('Organization', {
         .then((res) => {
           this.fetching = false
           this.fetchOrganization()
-          console.log(res)
           message.success(res.data['message'])
         })
         .catch((err) => {
           this.error = err.response
           this.fetching = false
-          console.log(err)
+
           if (err.response.data['message']) {
             message.error(err.response.data['message'])
           }

@@ -26,7 +26,7 @@ import { ref, watch } from 'vue'
 import { Layout } from 'ant-design-vue'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue'
 //component
-import Sidebar from '../components/Layout/Sidebar.vue'
+import Sidebar from '../../components/Layout/Sidebar.vue'
 
 const collapsed = ref(false)
 
