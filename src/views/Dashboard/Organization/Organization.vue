@@ -37,33 +37,29 @@
       :loading="isLoadingTable"
       :pagination="false"
     >
-      <template #index="{ column, index }">
-        <template v-if="column.key === 'index'">
-          <a>{{ index + 1 }}</a>
-        </template>
+      <template v-slot:index="{ index }">
+        <a> {{ index + 1 }} </a>
       </template>
-      <template v-if="columns.scopedSlots.customRender === 'id'">
-        <a> {{ record[columns.dataIndex] }} </a>
+      <template v-slot:id="{ text }">
+        <a> {{ text }} </a>
       </template>
-      <template v-else-if="columns.scopedSlots.customRender === 'organization'">
-        <a> {{ record[columns.dataIndex] }} </a>
+      <template v-slot:organization="{ text }">
+        <a> {{ text }} </a>
       </template>
-      <template v-else-if="columns.scopedSlots.customRender === 'description'">
-        <a> {{ record[columns.dataIndex] }} </a>
+      <template v-slot:description="{ text }">
+        <a> {{ text }} </a>
       </template>
-      <template #operation="{ record, column }">
-        <template v-if="column.key === 'operation'">
-          <Space
-            ><EditTwoTone
-              @click="actionHandleClick(record, HANDLE_ACTION_VARIABLE.edit)"
-              twoToneColor="#1890ff"
-              style="font-size: 22px" />
-            <DeleteTwoTone
-              @click="actionHandleClick(record, HANDLE_ACTION_VARIABLE.delete)"
-              twoToneColor="red"
-              style="font-size: 22px"
-          /></Space>
-        </template>
+      <template v-slot:operation="{ record }">
+        <Space
+          ><EditTwoTone
+            @click="actionHandleClick(record, HANDLE_ACTION_VARIABLE.edit)"
+            twoToneColor="#1890ff"
+            style="font-size: 22px" />
+          <DeleteTwoTone
+            @click="actionHandleClick(record, HANDLE_ACTION_VARIABLE.delete)"
+            twoToneColor="red"
+            style="font-size: 22px"
+        /></Space>
       </template>
     </Table>
 
@@ -132,19 +128,19 @@ const columns = [
     title: 'Organization ID',
     dataIndex: 'id',
     key: 'id',
-    scopedSlots: { customRender: 'id' }
+    slots: { bodyCell: 'id' }
   },
   {
     title: 'Organization',
     dataIndex: 'organization',
     key: 'organization',
-    scopedSlots: { customRender: 'organization' }
+    slots: { bodyCell: 'organization' }
   },
   {
     title: 'Description',
     dataIndex: 'description',
     key: 'description',
-    scopedSlots: { customRender: 'description' }
+    slots: { bodyCell: 'description' }
   },
   {
     title: 'Action',
