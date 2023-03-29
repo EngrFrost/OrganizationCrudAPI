@@ -105,7 +105,7 @@ const useOrganization = defineStore('Organization', {
         })
         .then((res) => {
           this.fetching = false
-          this.fetchOrganization('fetchOrganization')
+          this.fetchOrganization('/organization')
           message.success(res.data['message'])
         })
         .catch((err) => {
@@ -129,7 +129,7 @@ const useOrganization = defineStore('Organization', {
         })
         .then((res) => {
           this.fetching = false
-          this.fetchOrganization()
+          this.fetchOrganization('/organization')
           message.success(res.data['message'])
         })
         .catch((err) => {
