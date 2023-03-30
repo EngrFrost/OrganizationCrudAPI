@@ -2,7 +2,7 @@
   <div style="margin-bottom: 1rem">
     <Modal
       v-model:visible="isOpenDialogAddUpdateOrganization"
-      title="Add New Organization"
+      :title="isForAddNewModal ? 'Add New Organization' : 'Update Organization'"
       @cancel="closeDialog"
       :ok-button-props="{ disabled: formDisabled }"
       @ok="onFinish"
@@ -38,9 +38,13 @@ import {
   descriptionRules
 } from '../../../constants/constantsVarible'
 
-const props = defineProps(['isOpenDialogAddUpdateOrganization', 'isForAddNewModal', 'modalID'])
+const props = defineProps([
+  'isOpenDialogAddUpdateOrganization',
+  'isForAddNewModal',
+  'modalUpdateContent'
+])
 const emit = defineEmits(['closeDialog'])
-const { isOpenDialogAddUpdateOrganization, isForAddNewModal, modalID } = toRefs(props)
+const { isOpenDialogAddUpdateOrganization, isForAddNewModal, modalUpdateContent } = toRefs(props)
 
 // access Pinia
 const org = useOrganization()
@@ -50,10 +54,9 @@ const formDisabled = ref(false)
 const formRef = ref()
 
 //initial state
-const initialformState = () => ({
-  organization: '',
-  description: ''
-})
+const initialformState = () => modalUpdateContent.value
+
+//s
 const formState = reactive(initialformState())
 const resetUserForm = () => Object.assign(formState, initialformState())
 
@@ -82,9 +85,9 @@ const updateHandler = () => {
     setTimeout(() => {
       formDisabled.value = false
       emit('closeDialog', DIALOG_CONSTANTS_VARIABLE.isForAddNewDialog)
-      const newFormstate = { ...formState, modalID: modalID.value }
-      console.log('Submitted form:', newFormstate)
-      org.updateOrganization(newFormstate)
+
+      console.log('Submitted form:', formState)
+      org.updateOrganization(formState)
       resetUserForm()
     }, 1000)
   })

@@ -1,7 +1,7 @@
 <template>
   <Modal
     v-model:visible="isOpenDialogDeleteOrganization"
-    title="Add New Organization"
+    title="Delete confirmation Organization"
     @cancel="cancelHandleClick"
     @ok="submitHandler"
     :cancel-button-props="{ disabled: formDisabled }"
@@ -13,10 +13,8 @@
         <Typography.Title type="danger" :level="4"
           >Are you sure you want to delete this record?</Typography.Title
         >
-        <Typography.Text strong>ID:</Typography.Text>
-        <Typography.Text strong
-          >Description:This is for those who do not have any assiociation</Typography.Text
-        >
+        <Typography.Text strong>ID:{{ modalUpdateContent.id }}</Typography.Text>
+        <Typography.Text strong>Description: {{ modalUpdateContent.description }}</Typography.Text>
         <Form.Item name="inputField" :rules="inputValidation">
           <Input
             placeholder="YES DELETE"
@@ -42,10 +40,10 @@ import { debounce } from 'lodash'
 import { DIALOG_CONSTANTS_VARIABLE } from '../../../constants/constantsVarible'
 
 const org = useOrganization()
-const props = defineProps(['isOpenDialogDeleteOrganization', 'modalID'])
+const props = defineProps(['isOpenDialogDeleteOrganization', 'modalUpdateContent'])
 const emits = defineEmits(['closeDialog'])
 
-const { isOpenDialogDeleteOrganization, modalID } = toRefs(props)
+const { isOpenDialogDeleteOrganization, modalUpdateContent } = toRefs(props)
 
 const formRef = ref()
 const formDisabled = ref(true)
@@ -83,7 +81,7 @@ const submitHandler = () => {
     formDisabled.value = true
     if (formState.inputField === 'YES DELETE') {
       setTimeout(() => {
-        org.deleteOrganization(modalID.value)
+        org.deleteOrganization(modalUpdateContent.value.id)
         resetUserForm()
         formDisabled.value = false
         emits('closeDialog', 'isForDeleteDialog')

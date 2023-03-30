@@ -121,7 +121,7 @@ const useOrganization = defineStore('Organization', {
       this.fetching = true
 
       api
-        .post(`/organization/update/${form.modalID}`, form, {
+        .post(`/organization/update/${form.id}`, form, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
             'Content-Type': 'application/json'

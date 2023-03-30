@@ -67,14 +67,14 @@
     <DeleteOrganization
       @closeDialog="closeDialog"
       :isOpenDialogDeleteOrganization="isOpenDialogDeleteOrganization"
-      :modalID="modalID"
+      :modalUpdateContent="modalUpdateContent"
     />
     <!-- Modal for either add New Org or Update Organization  -->
     <AddNewOrganization
       :isOpenDialogAddUpdateOrganization="isOpenDialogAddUpdateOrganization"
       @closeDialog="closeDialog"
       :isForAddNewModal="isForAddNewModal"
-      :modalID="modalID"
+      :modalUpdateContent="modalUpdateContent"
     />
   </div>
 </template>
@@ -111,7 +111,7 @@ const {
   closeDialog,
   actionHandleClick,
   isForAddNewModal,
-  modalID,
+  modalUpdateContent,
   isOpenDialogAddUpdateOrganization,
   isOpenDialogDeleteOrganization,
   openDialog

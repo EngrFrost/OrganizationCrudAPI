@@ -1,11 +1,11 @@
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { DIALOG_CONSTANTS_VARIABLE } from '../../constants/constantsVarible'
 
 export const useDialog = () => {
   const isOpenDialogDeleteOrganization = ref(false)
   const isOpenDialogAddUpdateOrganization = ref(false)
   const isForAddNewModal = ref()
-  const modalID = ref()
+  const modalUpdateContent = reactive({ id: '', organization: '', description: '' })
   //open dialog Handlers
   const openDialog = (type) => {
     const action = {
@@ -15,6 +15,9 @@ export const useDialog = () => {
       isForAddNewDialog: () => {
         isOpenDialogAddUpdateOrganization.value = true
         isForAddNewModal.value = true
+        modalUpdateContent.id = ''
+        modalUpdateContent.description = ''
+        modalUpdateContent.organization = ''
       },
       isForUpdateDialog: () => {
         isOpenDialogAddUpdateOrganization.value = true
@@ -40,14 +43,19 @@ export const useDialog = () => {
   const actionHandleClick = (record, type) => {
     // do something with the clicked row data
     const action = {
+      add: () => {},
       edit: () => {
-        console.log('edit Clicked record:', record.id)
-        modalID.value = record.id
+        console.log('edit Clicked record:', record)
+        modalUpdateContent.id = record?.id
+        modalUpdateContent.description = record?.description
+        modalUpdateContent.organization = record?.organization
         openDialog(DIALOG_CONSTANTS_VARIABLE.isForUpdateDialog)
       },
       delete: () => {
         console.log('delete Clicked record:', record.id)
-        modalID.value = record.id
+        modalUpdateContent.id = record?.id
+        modalUpdateContent.description = record?.description
+        modalUpdateContent.organization = record?.organization
         openDialog(DIALOG_CONSTANTS_VARIABLE.isForDeleteDialog)
       }
     }
@@ -59,7 +67,7 @@ export const useDialog = () => {
     actionHandleClick,
     openDialog,
     isForAddNewModal,
-    modalID,
+    modalUpdateContent,
     isOpenDialogAddUpdateOrganization,
     isOpenDialogDeleteOrganization
   }

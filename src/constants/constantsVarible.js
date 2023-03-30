@@ -6,7 +6,8 @@ export const DIALOG_CONSTANTS_VARIABLE = {
 
 export const HANDLE_ACTION_VARIABLE = {
   edit: 'edit' || 'EDIT',
-  delete: 'delete' || 'delete'
+  delete: 'delete' || 'DELETE',
+  add: 'add' || 'ADD'
 }
 
 export const organizationRules = [
